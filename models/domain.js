@@ -9,6 +9,9 @@ const domainSchema = new mongoose.Schema({
     type_domain: {
         type: String,
         required: true
+    },
+    userID:{
+        type: String
     }
 });
 

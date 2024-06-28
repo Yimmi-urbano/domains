@@ -1,9 +1,11 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Domain = require('../models/domain');
+const Protect = require('../middleware/securityToken');
 
 // Obtener todos los dominios
-router.get('/', async (req, res) => {
+router.get('/', Protect, async (req, res) => {
     try {
         const domains = await Domain.find();
         res.json(domains);
@@ -16,7 +18,8 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     const domain = new Domain({
         domain: req.body.domain,
-        type_domain: req.body.type_domain
+        type_domain: req.body.type_domain,
+        userID: req.body.userID // Asegúrate de que userID esté incluido en la creación del dominio
     });
 
     try {
@@ -68,11 +71,36 @@ router.get('/exists/:domain', async (req, res) => {
     }
 });
 
+// Obtener un dominio por userID usando /me
+router.get('/my/domain', Protect, getDomainByUserID, (req, res) => {
+    res.json(res.domain);
+});
+
+// Middleware para obtener un dominio por ID
 async function getDomain(req, res, next) {
     let domain;
     try {
         domain = await Domain.findById(req.params.id);
         if (domain == null) {
+            return res.status(404).json({ message: 'Cannot find domain' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: err.message });
+    }
+
+    res.domain = domain;
+    next();
+}
+
+// Middleware para obtener un dominio por userID
+async function getDomainByUserID(req, res, next) {
+    const id  = req.user; // Asegúrate de que el middleware Protect agregue la información del usuario al req
+
+console.log(id)
+    let domain;
+    try {
+        domain = await Domain.findOne({ userID: id });
+        if (!domain) {
             return res.status(404).json({ message: 'Cannot find domain' });
         }
     } catch (err) {
