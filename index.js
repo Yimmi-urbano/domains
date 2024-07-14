@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +17,7 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
 app.use(bodyParser.json());
+app.use(cors()); // Agrega CORS middleware
 
 const domainsRouter = require('./routes/domains');
 app.use('/domains', domainsRouter);
