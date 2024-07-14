@@ -99,7 +99,7 @@ async function getDomainByUserID(req, res, next) {
 console.log(id)
     let domain;
     try {
-        domain = await Domain.findOne({ userID: id });
+        domain = await Domain.find({ userID: id });
         if (!domain) {
             return res.status(404).json({ message: 'Cannot find domain' });
         }
