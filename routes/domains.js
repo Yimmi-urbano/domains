@@ -63,10 +63,10 @@ router.delete('/:id', getDomain, async (req, res) => {
 
 // Verificar si un dominio existe
 router.post('/exists', async (req, res) => {
-    const domain = req.headers['domain'];
+    const { domain } = req.body; // Obtener el dominio del body
 
     if (!domain) {
-        return res.status(400).json({ message: 'El dominio es requerido en el header' });
+        return res.status(400).json({ message: 'El dominio es requerido en el cuerpo de la solicitud' });
     }
 
     try {
