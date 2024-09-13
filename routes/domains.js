@@ -15,11 +15,11 @@ router.get('/', Protect, async (req, res) => {
 });
 
 // Crear un nuevo dominio
-router.post('/', async (req, res) => {
+router.post('/create', Protect, async (req, res) => {
     const domain = new Domain({
         domain: req.body.domain,
         type_domain: req.body.type_domain,
-        userID: req.body.userID // Asegúrate de que userID esté incluido en la creación del dominio
+        userID: req.user // Asigna el userID desde el token JWT validado
     });
 
     try {
@@ -94,9 +94,9 @@ async function getDomain(req, res, next) {
 
 // Middleware para obtener un dominio por userID
 async function getDomainByUserID(req, res, next) {
-    const id  = req.user; // Asegúrate de que el middleware Protect agregue la información del usuario al req
+    const id = req.user; // Asegúrate de que el middleware Protect agregue la información del usuario al req
 
-console.log(id)
+    console.log(id)
     let domain;
     try {
         domain = await Domain.find({ userID: id });

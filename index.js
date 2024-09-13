@@ -17,7 +17,7 @@ db.on('error', (error) => console.error(error));
 db.once('open', () => console.log('Connected to Database'));
 
 app.use(bodyParser.json());
-app.use(cors()); // Agrega CORS middleware
+app.use(cors());
 
 const domainsRouter = require('./routes/domains');
 app.use('/domains', domainsRouter);
