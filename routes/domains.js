@@ -15,11 +15,11 @@ router.get('/', Protect, async (req, res) => {
 });
 
 // Crear un nuevo dominio
-router.post('/create', Protect, async (req, res) => {
+router.post('/', async (req, res) => {
     const domain = new Domain({
         domain: req.body.domain,
         type_domain: req.body.type_domain,
-        userID: req.user // Asigna el userID desde el token JWT validado
+        userID: req.body.userID // Asegúrate de que userID esté incluido en la creación del dominio
     });
 
     try {
@@ -62,10 +62,16 @@ router.delete('/:id', getDomain, async (req, res) => {
 });
 
 // Verificar si un dominio existe
-router.get('/exists/:domain', async (req, res) => {
+router.get('/exists', async (req, res) => {
+    const domain = req.headers['domain'];
+
+    if (!domain) {
+        return res.status(400).json({ message: 'El dominio es requerido en el header' });
+    }
+
     try {
-        const domain = await Domain.findOne({ domain: req.params.domain });
-        res.json({ exists: domain !== null });
+        const domainExists = await Domain.findOne({ domain });
+        res.json({ exists: domainExists !== null });
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
@@ -94,9 +100,9 @@ async function getDomain(req, res, next) {
 
 // Middleware para obtener un dominio por userID
 async function getDomainByUserID(req, res, next) {
-    const id = req.user; // Asegúrate de que el middleware Protect agregue la información del usuario al req
+    const id  = req.user; // Asegúrate de que el middleware Protect agregue la información del usuario al req
 
-    console.log(id)
+console.log(id)
     let domain;
     try {
         domain = await Domain.find({ userID: id });
