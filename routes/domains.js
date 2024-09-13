@@ -62,7 +62,7 @@ router.delete('/:id', getDomain, async (req, res) => {
 });
 
 // Verificar si un dominio existe
-router.get('/exists', async (req, res) => {
+router.post('/exists', async (req, res) => {
     const domain = req.headers['domain'];
 
     if (!domain) {
